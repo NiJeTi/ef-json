@@ -22,8 +22,7 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 
-var jsonId = Guid.NewGuid();
-
+var jsonId = Guid.Empty;
 app.Map("/", async (DatabaseContext db, CancellationToken cancellationToken) =>
 {
     await FillDatabase(db, cancellationToken);
@@ -43,6 +42,10 @@ return;
 
 async Task FillDatabase(DatabaseContext db, CancellationToken cancellationToken)
 {
+    await db.Set<Entity>().ExecuteDeleteAsync();
+
+    jsonId = Guid.NewGuid();
+    
     for (var i = 0; i < 3; i++)
     {
         var json = new Dictionary<Guid, Guid?>
